@@ -61,7 +61,7 @@ WSGI_APPLICATION = 'SubnetTracker.wsgi.application'
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.postgresql_psycopg2',
-		'NAME': 'stacksmash',
+		'NAME': 'subnettracker',
 		'USER': 'justasic',
 		'PASSWORD': 'letmein',
 		'HOST': '',

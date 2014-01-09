@@ -14,6 +14,7 @@
 {# Define the page content. #}
 {% block body %}
     <h1 class="title">Current CIDR subnets</h1>
+    <div class="table">
     <table class="subnet_table">
         <tr>
             <th>Name</th>
@@ -21,10 +22,42 @@
         </tr>
 
         {% for c in cidrs %}
-            <tr>
-                <td>c.name</td>
-                <td>c.cidr</td>
+            <tr id="cidr_{{ c.id }}">
+                <td>{{ c.name }}</td>
+                <td>{{ c.cidr }}</td>
             </tr>
         {% endfor %}
     </table>
+    </div>
+
+    <br />
+    <div class="error"></div>
+    <form action="/cidrcheck/" method="POST" class="form">{% csrf_token %}
+        Name: {{ cidr_form.name }}
+        CIDR: {{ cidr_form.cidr }}
+        <input type="submit" value="Submit" />
+    </form>
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+    var frm = $('.form');
+    frm.submit(function () {
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            success: function (data) {
+                var name = $('#id_name').val();
+                var cidr = $('#id_cidr').val();
+                $(".subnet_table tr:last").after('<tr><td>' + name + '</td><td>' + cidr + '</td></tr>');
+                alert("Hello");
+            },
+            error: function(data) {
+                $(".error").html(data);
+            }
+        });
+        return false;
+    });
+    </script>
 {% endblock %}
