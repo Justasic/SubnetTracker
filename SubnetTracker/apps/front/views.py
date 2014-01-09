@@ -5,7 +5,7 @@ from django.template.context import RequestContext
 
 def index(request):
 	ctx = RequestContext(request, {
-		'posts': [],
+			'posts': [],
 		})
 
-	render_to_response('front/index.html', ctx)
+	return render_to_response('front/index.html', ctx)

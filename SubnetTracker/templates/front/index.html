@@ -1,13 +1,30 @@
 {# Extend the basic HTML template. #}
 {% extends 'base.html' %}
+{% load staticfiles %}
 
 {# Set window title #}
 {% block title %}Subnets{% endblock %}
 
 {# Include any CSS or JS assets into the page. #}
 {% block head %}
+    <script src="{% static 'js/jquery-1.10.2.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/front.css' %}">
 {% endblock %}
 
 {# Define the page content. #}
 {% block body %}
+    <h1 class="title">Current CIDR subnets</h1>
+    <table class="subnet_table">
+        <tr>
+            <th>Name</th>
+            <th>CIDR</th>
+        </tr>
+
+        {% for c in cidrs %}
+            <tr>
+                <td>c.name</td>
+                <td>c.cidr</td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}
