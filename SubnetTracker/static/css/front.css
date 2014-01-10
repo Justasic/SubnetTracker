@@ -12,18 +12,15 @@ body {
     padding-right: 10%;
 }
 
-.subnet_table table, th, td {
+table, thead {
     border: 1px solid black;
     padding-left: 0.4%;
     text-align: center;
+    border-collapse: collapse;
 }
 
 .subnet_table td {
     width: 10%;
-}
-
-.subnet_table table {
-    border-collapse:collapse;
 }
 
 .subnet_table {
@@ -34,4 +31,8 @@ body {
     padding-left: 10%;
 }
 
+.error {
+    display: none;
+    color: red;
+}
 

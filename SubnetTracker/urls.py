@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 
 urlpatterns = patterns('',
-	url(r'^cidrcheck/', 'SubnetTracker.apps.front.views.cidrcheck', name='cidrcheck'),
+	url(r'^cidradd/', 'SubnetTracker.apps.front.views.cidradd', name='cidradd'),
+	url(r'^cidrremove/(\d+)/', 'SubnetTracker.apps.front.views.cidrremove', name='cidrremove'),
 	url(r'^$', 'SubnetTracker.apps.front.views.index'),
 )

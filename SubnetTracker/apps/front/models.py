@@ -15,7 +15,7 @@ class CIDR(models.Model):
 	cidr = models.CharField(max_length=20)
 
 	def __unicode__(self):
-		return str(self.name).encode('utf-8')
+		return unicode(self.name)
 
 	def CIDROverlaps(self, addr):
 		""" This function checks if the CIDR networks or addresses overlap.
@@ -24,6 +24,6 @@ class CIDR(models.Model):
 					an ipaddress.IPv4Network object.
 		"""
 		if isinstance(addr, IPv4Network):
-			return addr.overlaps(IPv4Network(self.cidr.encode('utf-8')))
+			return addr.overlaps(IPv4Network(unicode(self.cidr)))
 		else:
-			return IPv4Network(addr.encode('utf-8')).overlaps(IPv4Network(self.cidr.encode('utf-8')))
+			return IPv4Network(unicode(addr)).overlaps(IPv4Network(unicode(self.cidr)))

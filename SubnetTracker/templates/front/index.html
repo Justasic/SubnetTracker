@@ -16,48 +16,81 @@
     <h1 class="title">Current CIDR subnets</h1>
     <div class="table">
     <table class="subnet_table">
-        <tr>
-            <th>Name</th>
-            <th>CIDR</th>
-        </tr>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>CIDR</th>
+            </tr>
+        </thead>
 
         {% for c in cidrs %}
             <tr id="cidr_{{ c.id }}">
                 <td>{{ c.name }}</td>
                 <td>{{ c.cidr }}</td>
+                <td id="x_button"><a href="javascript:deleteRow({{ c.id }})">Remove '{{ c.name }}'</a></td>
             </tr>
         {% endfor %}
     </table>
     </div>
 
     <br />
-    <div class="error"></div>
-    <form action="/cidrcheck/" method="POST" class="form">{% csrf_token %}
-        Name: {{ cidr_form.name }}
-        CIDR: {{ cidr_form.cidr }}
-        <input type="submit" value="Submit" />
-    </form>
+    <div class="form">
+        <p>Add a CIDR address: <div class="error"></div></p>
+        <form action="/cidradd/" method="POST" id="form">{% csrf_token %}
+            Name: {{ cidr_form.name }}
+            CIDR: {{ cidr_form.cidr }}
+            <input type="submit" value="Submit" />
+        </form>
+    </div>
 {% endblock %}
 
 {% block scripts %}
     <script type="text/javascript">
-    var frm = $('.form');
+    /* Handle the AJAX call to add a CIDR mask */
+    var frm = $('#form');
     frm.submit(function () {
         $.ajax({
             type: frm.attr('method'),
             url: frm.attr('action'),
             data: frm.serialize(),
-            success: function (data) {
-                var name = $('#id_name').val();
-                var cidr = $('#id_cidr').val();
-                $(".subnet_table tr:last").after('<tr><td>' + name + '</td><td>' + cidr + '</td></tr>');
-                alert("Hello");
+            dataType: 'json',
+            success: function (res) {
+                if(res.error){
+                    var e = $(".error");
+                    if(res.id){
+                        e.text("CIDR address already allocated as '" + res.name + "'");
+                    }else{
+                        e.text(res.error);
+                    }
+                    e.show();
+                }else{
+                    $(".error").hide();
+                    var name = $('#id_name');
+                    var cidr = $('#id_cidr');
+                    var id = res.success;
+                    $(".subnet_table tr:last").after('<tr id="cidr_'+id+'"><td>'+name.val()+'</td><td>'+cidr.val()+
+                            '</td><td><a href="javascript:deleteRow('+id+')">Remove \''+name.val()+'\'</a></td></tr>');
+                    name.val('');
+                    cidr.val('');
+                }
             },
             error: function(data) {
-                $(".error").html(data);
+                var e = $(".error");
+                e.text("A server error occured.");
+                e.show();
             }
         });
         return false;
     });
+
+    /* Handle the deletion of an item */
+    function deleteRow(row_id){
+        $.get("/cidrremove/"+row_id+"/").done(function(){
+            $('#cidr_'+row_id).remove();
+        }).fail(function(){
+            alert("Server error occured.");
+        });
+
+    }
     </script>
 {% endblock %}
