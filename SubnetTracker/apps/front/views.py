@@ -79,7 +79,7 @@ def cidradd(request):
 				jsonresponse = {'error': 'Server error'}
 				raise
 		else:
-			jsonresponse = {'error': 'Request must be ajax or POST'}
+			jsonresponse = {'error': 'Please fill out all form fields'}
 	else:
 		jsonresponse = {'error': 'Request must be ajax or POST'}
 
@@ -102,3 +102,10 @@ def cidrremove(request, row_id):
 
 	return HttpResponse(json.dumps({'success': u"Successfully deleted item %s" % row_id}), \
 						content_type='application/json')
+
+def cidrlist(request):
+	cidr_list = []
+
+	for c in CIDR.objects.all():
+		cidr_list.append({'name': c.name, 'mask': c.cidr, 'id': c.id})
+	return HttpResponse(json.dumps(cidr_list), content_type='application/json')
