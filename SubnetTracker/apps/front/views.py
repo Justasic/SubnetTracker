@@ -8,14 +8,15 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from ipaddress import IPv4Network, AddressValueError
 import json
 
-# Our imports
+# Import our CIDR model
 from SubnetTracker.apps.front.models import CIDR
 
 
 class CIDRForm(ModelForm):
 	""" This is an extension of the CIDR Model to make
-		a nice Django Form out of it. This makes using
-		the Model easier with the Form.
+		a nice Django Form out of it. This makes
+		using the form and saving its data really
+		easy.
 	"""
 	class Meta:
 		model = CIDR
@@ -53,14 +54,17 @@ def cidradd(request):
 		If the CIDR is invalid, it returns and error and updates nothing.
 	"""
 	jsonresponse = {}
+	# Make sure it's a post request or that the request is AJAX, otherwise give
+	# a bad request error
 	if request.is_ajax() or request.method == 'POST':
 		form = CIDRForm(data=request.POST)
 		if form.is_valid():
 			# get the model without saving to the database.
 			model = form.save(commit=False)
 			try:
+				# Check and make sure the CIDR mask is valid
 				ip = IPv4Network(unicode(model.cidr))
-
+				# Check that the CIDR mask doesn't already overlap an existing CIDR mask.
 				for c in CIDR.objects.all():
 					if c.CIDROverlaps(ip):
 						raise AddressExists(u"CIDR address already exists", c)
@@ -76,11 +80,13 @@ def cidradd(request):
 				# Check that the CIDR mask doesn't exist already.
 				jsonresponse = {'error': e.message, 'id': e.cidr.id, 'name': e.cidr.name}
 			except:
+				# Some other error that requires debugging. Return a generic error.
 				jsonresponse = {'error': 'Server error'}
 				raise
 		else:
 			jsonresponse = {'error': 'Please fill out all form fields'}
 	else:
+		# this really should return a 400 error.
 		jsonresponse = {'error': 'Request must be ajax or POST'}
 
 	# Return our response.
@@ -103,9 +109,16 @@ def cidrremove(request, row_id):
 	return HttpResponse(json.dumps({'success': u"Successfully deleted item %s" % row_id}), \
 						content_type='application/json')
 
+
 def cidrlist(request):
-	cidr_list = []
+	""" This function returns a JSON encoded list of all the
+		CIDR addresses, names, and database ids.
+		This will be called every 2 or 5 seconds as an AJAX
+		call to check for any change in the list of known
+		CIDR addresses.
+	"""
+	cidrobjects = []
 
 	for c in CIDR.objects.all():
-		cidr_list.append({'name': c.name, 'mask': c.cidr, 'id': c.id})
-	return HttpResponse(json.dumps(cidr_list), content_type='application/json')
+		cidrobjects.append({'name': c.name, 'mask': c.cidr, 'id': c.id})
+	return HttpResponse(json.dumps(cidrobjects), content_type='application/json')

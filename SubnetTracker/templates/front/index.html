@@ -15,6 +15,8 @@
 {% block body %}
     <h1 class="title">Current CIDR subnets</h1>
     <div class="table">
+    {# A simple table. I could have done a bunch of div/span stuff but I find tables #}
+    {# much easier to use than doing a bunch of CSS stuff and div/spans. #}
     <table class="subnet_table">
         <thead>
             <tr>
@@ -27,6 +29,9 @@
             <tr id="cidr_{{ c.id }}">
                 <td>{{ c.name }}</td>
                 <td>{{ c.cidr }}</td>
+		{# I'll admit. I cheated here a bit but I really didn't feel like finding #}
+		{# the id of the row to remove so I just used this. It seems a bit more efficient #}
+		{# in my mind too compared to having to iterate all over the page for one thing. #}
                 <td id="x_button"><a href="javascript:deleteRow({{ c.id }})">Remove '{{ c.name }}'</a></td>
             </tr>
         {% endfor %}
@@ -44,6 +49,8 @@
     </div>
 {% endblock %}
 
+{# This block is put at the bottom of the page <body> tag in the HTML page. #}
+{# Used for scripts and other misc. page items. #}
 {% block scripts %}
     <script type="text/javascript">
     /* Handle the AJAX call to add a CIDR mask */
@@ -100,6 +107,11 @@
             '</td><td><a href="javascript:deleteRow('+row_id+')">Remove \''+name+'\'</a></td></tr>');
     }
 
+    /*  This function is used to check if an item is in an array.
+	Normally I would use $.InArray() from JQuery but it does
+	comparison on objects, not sub-items of those objects.
+	Here I checked if the item name is somewhere in the
+	array of objects */
     function inArray(item, array){
         for(var i = 0; i < array.length; i++)
         {
@@ -112,6 +124,10 @@
     /* Handle live updating of the table */
     var tableData;
     function handleUpdate(forceUpdate){
+	/* Run an AJAX call to the server and grab a JSON list of all the
+	   current CIDR masks. We will either compare it to an existing list
+	   (eg. tableData) or we will update the tableData list dependinng on
+	   whether 'forceUpdate' is set to true or not. */
         $.ajax({
            url: '/cidrlist/',
            dataType: 'json',
@@ -119,8 +135,9 @@
                var data = [];
                $.each(_data, function(i, item){data[i] = item;});
                /* force an update and disregard array comparisons. */
-               if(forceUpdate){ tableData = data; }
-               else{
+               if(forceUpdate){
+			tableData = data;
+               }else{
                    /* Compare the existing array to check if an item was removed server-side */
                    for(var i = 0; i < tableData.length; i++){
                        if(!inArray(tableData[i], data)){removeRow(tableData[i].id);}}
@@ -129,12 +146,13 @@
                    for(var i = 0; i < data.length; i++){
                        if (!inArray(data[i], tableData)){addRow(data[i].id, data[i].name, data[i].mask);}}
 
+		   /* Update the tableData variable. This prevents repeatedly adding data to the table */
                    tableData = data;
                }
            }
         });
     }
-    /* Check for updates every 2 seconds - I hate timers but I can't find a more efficient way */
+    /* Check for updates every 2 seconds - I hate to use timers but it seems I have to. */
     $(document).ready(function(){ handleUpdate(true); setInterval(function(){handleUpdate(false)}, 2000); });
     </script>
 {% endblock %}

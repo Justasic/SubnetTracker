@@ -3,6 +3,7 @@ __author__ = 'justasic'
 from django.db import models
 from ipaddress import IPv4Network
 
+
 class CIDR(models.Model):
 	""" Basic CIDR model to keep track of all the CIDRs
 		It's function is really to just manage the name=cidr

@@ -1,12 +1,24 @@
+/* Well. there isnt much CSS to look at. I figured because this is a 
+   IT department, they're not going to care if it looks pretty but
+   they will care about function. I made the site try not to look
+   hard on my eyes (by using a light, sky blue background) and become
+   easy to read.
+   There really wasnt much CSS to make this simple site although
+   improvements and optimizations would likely be needed.
+
+   Because I use Nginx and Pagespeed, I usually don't 'minify' my
+   css and javascript as Pagespeed will do it for me and cache it.
+*/
 body {
     background-color: #BBDAFF;
     font-family: Arial, Helvetica, sans-serif;
 }
-
+/* The page title is just the <h1> tags at the top */
 .title {
     text-align: center;
 }
 
+/* This is the 'table' <div> which contains subnet_table */
 .table {
     padding-left: 10%;
     padding-right: 10%;
