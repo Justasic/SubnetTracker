@@ -1,0 +1,83 @@
+[Redacted] Web Developer programming assignment
+
+Author: [Redacted] Development Team
+Date: 1/8/14
+
+
+Overview:
+
+The purpose of this assignment is to assess your ability to create a
+small, fully functioning web application using Python 2 and Django.
+
+
+Description:
+
+The IT department at your company is having trouble keeping track of
+which IPv4 addresses are assigned to which networks.  Sometimes
+overlapping CIDRs are assigned to two separate subnets which causes
+problems in routing.
+
+You have been tasked with creating a small web application which helps
+keep track of subnet usage.  This application will allow the IT
+department to see which CIDRs are already in use as well as add new
+CIDRs as new networks are added.
+
+0000any
+new CIDRs which are added must not overlap with any existing CIDRs.
+That is, no IP address can be a member of multiple subnets.
+
+Utilizing a web framework of your choice, create a basic web application
+that allows its users to see, add, and remove CIDRs from the company's
+list.  The only necessary data to keep track of is a network name plus
+associated CIDR.
+
+Network names and CIDRs should be displayed on the front page so that
+the IT department can easily see what is in use.  Moreover, the subnet
+list must be updated dynamically via Ajax, meaning that adding a subnet
+in one browser window results in the subnet list being automatically
+updated in another browser window to include the new subnet.
+
+Each subnet can be deleted, and a form should exist to add a new subnet.
+The form needs to track only the subnet name and CIDR.  An error must be
+displayed if the new CIDR overlaps with an existing CIDR.
+
+For example, when a user first logs in, the following information is
+displayed:
+
+SUBNETS
+-------
+<empty>
+
+Add subnet:
+Name: _________
+CIDR: _________
+
+
+Adding a new subnet would result in something like the following:
+
+SUBNETS
+-------
+Department A: 10.10.0.0/16 - (remove this subnet)
+
+
+If a user then attempts to add 10.10.1.0/24, an error will occur because
+10.10.1.0/24 is a subset of 10.10.0.0/16.  However, adding a CIDR such
+as 192.168.24.0/24 will succeed.
+
+The stored data need not persist across restarts of the web server (so
+can be stored in memory), but if you want to store it permanently, such
+as in a database, that is fine, too.
+
+The actual web page need not look like the example above; it just needs
+to contain all relevant information.
+
+
+
+Deliverable:
+
+The deliverable should be a compressed file, in either tarball or zip
+format, containing the following:
+
+1. All source code.
+2. Instructions on how to set up and run the source code, if required.
+
